@@ -1,0 +1,195 @@
+{
+	"commands": {
+		"help": {
+			"title": "{{helpEmoji}}・**Панель допомоги**",
+			"description": "Вітаю тебе, мандрівнику. Я Kurogami. Тут ти можеш дізнатися всі мої команди та всю необхідну інформацію.",
+			"stats": "**Серверів:** `{{serversCount}}` • **Користувачів:** `{{usersCount}}`",
+			"sections": {
+				"commandsSection": {
+					"title": "**Список команд**",
+					"description": "Ось всі команди, які я вмію виконувати:",
+					"list": {
+						"guildInfo": "Переглянути інформацію про сервер",
+						"channelsSetup": "Налаштувати канали бота",
+						"localeSet": "Налаштувати мову бота"
+					}
+				}
+			}
+		},
+		"locale": {
+			"messages": {
+				"success": "{{flag}} **Мова встановлена на {{language}}**"
+			}
+		},
+		"guildInfo": {
+			"fallbacks": {
+				"description": "> {{guildDescription}}",
+				"noDescription": "> Опис відсутній"
+			},
+			"members": {
+				"title": "### Учасники [ {{totalMembersCount}} ]",
+				"breakdown": {
+					"users": "- **Користувачі:** `{{nonBotMembersCount}}`",
+					"bots": "- **Боти:** `{{botMembersCount}}`"
+				}
+			},
+			"channels": {
+				"title": "### Канали [ {{totalChannels}} ]",
+				"text": {
+					"title": "- {{textChannelsIco}} **Текстові:** `{{textChannels}}`"
+				},
+				"voice": {
+					"title": " - {{voiceChannelsIco}} **Голосові:** `{{voiceChannels}}`"
+				},
+				"category": {
+					"title": "- {{categoryChannelsIco}} **Категорії:** `{{categoryChannels}}`"
+				},
+				"stage": {
+					"title": "- {{stageChannelsIco}} **Трибуни:** `{{stageChannels}}`"
+				},
+				"forum": {
+					"title": "- {{forumChannelsIco}} **Форуми:** `{{forumChannels}}`"
+				}
+			},
+			"emojis": {
+				"title": "### Емодзі [ {{totalEmojisCount}} ]",
+				"breakdown": {
+					"animated": "- **Анімовані:** `{{animatedEmojisCount}}`",
+					"static": "- **Статичні:** `{{staticEmojisCount}}`"
+				}
+			},
+			"roles": {
+				"title": "### Ролі [ {{totalRolesCount}} ]",
+				"preview": "> {{rolesPreview}}"
+			}
+		}
+	},
+	"components": {
+		"buttons": {
+			"help": {
+				"invite": {
+					"label": "Запросити бота"
+				},
+				"support": {
+					"label": "Сервер підтримки"
+				}
+			}
+		},
+		"menus": {
+			"help": {
+				"placeholder": "Нічого не вибрано",
+				"options": {
+					"commands": {
+						"label": "Команди",
+						"description": "Список усіх доступних команд"
+					}
+				}
+			},
+			"channelSetup": {
+				"description": "Використовуйте селектори нижче, щоб призначити канали для:\n- **Вітальних повідомлень**\n- **Повідомлень про вихід**\n- **Голосового  хабу**\n\n> Переконайтеся, що ви маєте відповідні права доступу для кожного вибраного каналу.",
+				"welcome": {
+					"placeholder": "Виберіть канал привітання",
+					"messages": {
+						"success": "**Канал привітання встановлений на <#{{channelId}}>**",
+						"alreadySet": "**Цей канал вже встановлено**"
+					}
+				},
+				"leave": {
+					"placeholder": "Виберіть канал прощання",
+					"messages": {
+						"success": "**Канал прощання встановлений на <#{{channelId}}>**",
+						"alreadySet": "**Цей канал вже встановлено**"
+					}
+				},
+				"voiceHub": {
+					"placeholder": "Виберіть канал для голосового хаба",
+					"messages": {
+						"success": "**Голосовий хаб встановлений на <#{{channelId}}>**",
+						"alreadySet": "**Цей канал вже встановлено**"
+					}
+				}
+			},
+			"voiceHub": {
+				"channelSettings": {
+					"placeholder": "Змінити налаштування каналу",
+					"options": {
+						"name": {
+							"label": "Ім'я",
+							"description": "Змінити назву каналу"
+						},
+						"limit": {
+							"label": "Ліміт",
+							"description": "Змінити ліміт користувачів"
+						}
+					}
+				},
+				"channelPermissions": {
+					"placeholder": "Змінити права доступу",
+					"options": {
+						"lock": {
+							"label": "Заблокувати",
+							"description": "Заблокувати канал"
+						},
+						"unlock": {
+							"label": "Розблокувати",
+							"description": "Розблокувати канал"
+						}
+					}
+				},
+				"channelInvite": {
+					"placeholder": "Виберіть учасника",
+					"messages": {
+						"success": "Користувач запрошений до каналу!",
+						"error": "У користувача відключені ЛС"
+					},
+					"options": {
+						"invite": {
+							"label": "Запросити",
+							"description": "Запросити користувача до каналу"
+						}
+					}
+				}
+			}
+		},
+		"setupChannels": {
+			"title": "Налаштування сервера",
+			"derscription": "Виберіть потрібні параметри за допомогою селекторів нижче:"
+		},
+		"modals": {
+			"channelName": {
+				"title": "Змінити назву каналу",
+				"form": {
+					"label": "Введіть нову назву каналу",
+					"placeholder": "Наприклад: Спілкування"
+				},
+				"messages": {
+					"success": "Ім'я каналу успішно змінено",
+					"cooldown": "Будь ласка, зачекайте {{remainingMinutes}} хв. перед наступною зміною імені"
+				}
+			},
+			"channelLimit": {
+				"title": "Змінити ліміт користувачів",
+				"form": {
+					"label": "Введіть ліміт",
+					"placeholder": "0 (без обмежень)"
+				},
+				"messages": {
+					"success": "Ліміт успішно змінено",
+					"invalid": "Введіть число від 0 до 99 (0 — без обмежень)"
+				}
+			}
+		}
+	},
+	"events": {
+		"voiceHub": {
+			"title": "Ласкаво просимо до вашого тимчасового голосового каналу!",
+			"description": {
+				"customize": "Ви можете змінити параметри каналу, використовуючи опції нижче.\n",
+				"important": "Це **тимчасовий** голосовий канал, який буде видалено, якщо в ньому не залишиться."
+			},
+			"messages": {
+				"permissionsUpdated": "Права голосового каналу успішно оновлені"
+			}
+		}
+	}
+}

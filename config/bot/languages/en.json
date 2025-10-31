@@ -1,0 +1,195 @@
+{
+	"commands": {
+		"help": {
+			"title": "{{helpEmoji}}**Help Panel**",
+			"description": "Hey there, traveler. I am Kurogami. Here you can learn all my commands and find all the necessary information.",
+			"stats": "**Servers:** `{{serversCount}}` • **Users:** `{{usersCount}}`",
+			"sections": {
+				"commandsSection": {
+					"title": "**List of commands**",
+					"description": "Here is a list of all the commands I know how to execute:",
+					"list": {
+						"guildInfo": "View server information",
+						"channelsSetup": "Configure bot channels",
+						"localeSet": "Configure bot language"
+					}
+				}
+			}
+		},
+		"locale": {
+			"messages": {
+				"success": "{{flag}} **Language has been set to  {{language}}**"
+			}
+		},
+		"guildInfo": {
+			"fallbacks": {
+				"description": "> {{guildDescription}}",
+				"noDescription": "> There is no description"
+			},
+			"members": {
+				"title": "### Members [ {{totalMembersCount}} ]",
+				"breakdown": {
+					"users": "- **Users:** `{{nonBotMembersCount}}`",
+					"bots": "- **Bots:** `{{botMembersCount}}`"
+				}
+			},
+			"channels": {
+				"title": "### Channels [ {{totalChannels}} ]",
+				"text": {
+					"title": "- {{textChannelsIco}} **Text:** `{{textChannels}}`"
+				},
+				"voice": {
+					"title": " - {{voiceChannelsIco}} **Voice:** `{{voiceChannels}}`"
+				},
+				"category": {
+					"title": "- {{categoryChannelsIco}} **Categories:** `{{categoryChannels}}`"
+				},
+				"stage": {
+					"title": "- {{stageChannelsIco}} **Stage:** `{{stageChannels}}`"
+				},
+				"forum": {
+					"title": "- {{forumChannelsIco}} **Forums:** `{{forumChannels}}`"
+				}
+			},
+			"emojis": {
+				"title": "### Total Emojis [ {{totalEmojisCount}} ]",
+				"breakdown": {
+					"animated": "- **Animated:** `{{animatedEmojisCount}}`",
+					"static": "- **Static:** `{{staticEmojisCount}}`"
+				}
+			},
+			"roles": {
+				"title": "### Total Roles [ {{totalRolesCount}} ]",
+				"preview": "> {{rolesPreview}}"
+			}
+		}
+	},
+	"components": {
+		"buttons": {
+			"help": {
+				"invite": {
+					"label": "Invite Bot"
+				},
+				"support": {
+					"label": "Support Server"
+				}
+			}
+		},
+		"menus": {
+			"help": {
+				"placeholder": "Nothing selected",
+				"options": {
+					"commands": {
+						"label": "Commands",
+						"description": "List of all available commands"
+					}
+				}
+			},
+			"channelSetup": {
+				"description": "Use the options below to choose channels for:\n- **Welcome messages**\n- **Leave messages**\n- **Voice hub**\n\n> Make sure you have the right access for each channel.",
+				"welcome": {
+					"placeholder": "Select welcome channel",
+					"messages": {
+						"success": "**Welcome a channel has been set to <#{{channelId}}>**",
+						"alreadySet": "**This channel is already set up**"
+					}
+				},
+				"leave": {
+					"placeholder": "Select a leave channel",
+					"messages": {
+						"success": "**Leave channel has been set to <#{{channelId}}>**",
+						"alreadySet": "**This channel is already set up**"
+					}
+				},
+				"voiceHub": {
+					"placeholder": "Select a channel for the Voice Hub system",
+					"messages": {
+						"success": "**Voice hub channel has been set to <#{{channelId}}>**",
+						"alreadySet": "**This channel is already set up**"
+					}
+				}
+			},
+			"voiceHub": {
+				"channelSettings": {
+					"placeholder": "Change Channel Settings",
+					"options": {
+						"name": {
+							"label": "Name",
+							"description": "Change channel name"
+						},
+						"limit": {
+							"label": "Limit",
+							"description": "Change channel user limit"
+						}
+					}
+				},
+				"channelPermissions": {
+					"placeholder": "Change Channel Permissions",
+					"options": {
+						"lock": {
+							"label": "Lock",
+							"description": "Lock channel"
+						},
+						"unlock": {
+							"label": "Unlock",
+							"description": "Unlock channel"
+						}
+					}
+				},
+				"channelInvite": {
+					"placeholder": "Select Member",
+					"messages": {
+						"success": "User has been invited to the channel!",
+						"error": "User has their DMs disabled."
+					},
+					"options": {
+						"invite": {
+							"label": "Invite",
+							"description": "Invite a user to a channel"
+						}
+					}
+				}
+			}
+		},
+		"setupChannels": {
+			"title": "Channel Settings",
+			"derscription": "Select the desired parameters using the selectors below:"
+		},
+		"modals": {
+			"channelName": {
+				"title": "Change Channel Name",
+				"form": {
+					"label": "Enter a new channel name",
+					"placeholder": "Example: Talking"
+				},
+				"messages": {
+					"success": "Channel name successfully changed",
+					"cooldown": "Please wait {{remainingMinutes}} minute(s) before changing the channel name again"
+				}
+			},
+			"channelLimit": {
+				"title": "Change User Limit",
+				"form": {
+					"label": "Enter the limit",
+					"placeholder": "0 (for unlimited)"
+				},
+				"messages": {
+					"success": "User limit has been changed",
+					"invalid": "Enter a number from 0 to 99 (0 means unlimited)"
+				}
+			}
+		}
+	},
+	"events": {
+		"voiceHub": {
+			"title": "Welcome to your temporary voice channel!",
+			"description": {
+				"customize": "You can change the channel settings using the options below.\n",
+				"important": "This is a **temporary** voice channel that will be deleted if no one remains in it."
+			},
+			"messages": {
+				"permissionsUpdated": "Voice channel was successfully modified"
+			}
+		}
+	}
+}

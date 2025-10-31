@@ -1,0 +1,195 @@
+{
+	"commands": {
+		"help": {
+			"title": "{{helpEmoji}}・**Панель помощи**",
+			"description": "Приветствую тебя путник. Я Kurogami. Тут ты можешь узнать все мои команды и всю необходимую информацию.",
+			"stats": "**Серверов:** `{{serversCount}}` • **Пользователей:** `{{usersCount}}`",
+			"sections": {
+				"commandsSection": {
+					"title": "**Список команд**",
+					"description": "Вот все команды, которые я умею выполнять:",
+					"list": {
+						"guildInfo": "Посмотреть информацию о сервере",
+						"channelsSetup": "Настроить каналы бота",
+						"localeSet": "Настроить язык бота"
+					}
+				}
+			}
+		},
+		"locale": {
+			"messages": {
+				"success": "{{flag}} **Язык установлен на {{language}}**"
+			}
+		},
+		"guildInfo": {
+			"fallbacks": {
+				"description": "> {{guildDescription}}",
+				"noDescription": "> Описание отсутствует"
+			},
+			"members": {
+				"title": "### Участники [ {{totalMembersCount}} ]",
+				"breakdown": {
+					"users": "- **Пользователи:** `{{nonBotMembersCount}}`",
+					"bots": "- **Боты:** `{{botMembersCount}}`"
+				}
+			},
+			"channels": {
+				"title": "### Каналы [ {{totalChannels}} ]",
+				"text": {
+					"title": "- {{textChannelsIco}} **Текстовые:** `{{textChannels}}`"
+				},
+				"voice": {
+					"title": " - {{voiceChannelsIco}} **Голосовые:** `{{voiceChannels}}`"
+				},
+				"category": {
+					"title": "- {{categoryChannelsIco}} **Категории:** `{{categoryChannels}}`"
+				},
+				"stage": {
+					"title": "- {{stageChannelsIco}} **Трибуны:** `{{stageChannels}}`"
+				},
+				"forum": {
+					"title": "- {{forumChannelsIco}} **Форумы:** `{{forumChannels}}`"
+				}
+			},
+			"emojis": {
+				"title": "### Эмодзи [ {{totalEmojisCount}} ]",
+				"breakdown": {
+					"animated": "- **Анимированные:** `{{animatedEmojisCount}}`",
+					"static": "- **Статические:** `{{staticEmojisCount}}`"
+				}
+			},
+			"roles": {
+				"title": "### Роли [ {{totalRolesCount}} ]",
+				"preview": "> {{rolesPreview}}"
+			}
+		}
+	},
+	"components": {
+		"buttons": {
+			"help": {
+				"invite": {
+					"label": "Пригласить бота"
+				},
+				"support": {
+					"label": "Сервер поддержки"
+				}
+			}
+		},
+		"menus": {
+			"help": {
+				"placeholder": "Ничего не выбрано",
+				"options": {
+					"commands": {
+						"label": "Команды",
+						"description": "Список всех доступных команд"
+					}
+				}
+			},
+			"channelSetup": {
+				"description": "Используйте селекторы ниже, чтобы назначить каналы для:\n- **Приветственных сообщений**\n- **Сообщений об уходе**\n- **Голосовой хаб**\n\n> Убедитесь, что у вас есть соответствующие права доступа для каждого выбранного канала.",
+				"welcome": {
+					"placeholder": "Выберите канал приветствия",
+					"messages": {
+						"success": "**Канал приветствия установлен на <#{{channelId}}>**",
+						"alreadySet": "**Этот канал уже установлен**"
+					}
+				},
+				"leave": {
+					"placeholder": "Выберите канал прощания",
+					"messages": {
+						"success": "**Канал прощания установлен на <#{{channelId}}>**",
+						"alreadySet": "**Этот канал уже установлен**"
+					}
+				},
+				"voiceHub": {
+					"placeholder": "Выберите канал для голосового хаба",
+					"messages": {
+						"success": "**Голосовой хаб установлен на <#{{channelId}}>**",
+						"alreadySet": "**Этот канал уже установлен**"
+					}
+				}
+			},
+			"voiceHub": {
+				"channelSettings": {
+					"placeholder": "Изменить настройки канала",
+					"options": {
+						"name": {
+							"label": "Имя",
+							"description": "Изменить имя канала"
+						},
+						"limit": {
+							"label": "Лимит",
+							"description": "Изменить лимит пользователей"
+						}
+					}
+				},
+				"channelPermissions": {
+					"placeholder": "Изменить права доступа",
+					"options": {
+						"lock": {
+							"label": "Заблокировать",
+							"description": "Заблокировать канал"
+						},
+						"unlock": {
+							"label": "Разблокировать",
+							"description": "Разблокировать канал"
+						}
+					}
+				},
+				"channelInvite": {
+					"placeholder": "Выберите участника",
+					"messages": {
+						"success": "Пользователь приглашён в канал!",
+						"error": "У пользователя отключены ЛС."
+					},
+					"options": {
+						"invite": {
+							"label": "Пригласить",
+							"description": "Пригласить пользователя в канал"
+						}
+					}
+				}
+			}
+		},
+		"setupChannels": {
+			"title": "Настройки сервера",
+			"derscription": "Выберите нужные параметры с помощью селекторов ниже:"
+		},
+		"modals": {
+			"channelName": {
+				"title": "Изменить имя канала",
+				"form": {
+					"label": "Введите новое имя канала",
+					"placeholder": "Например: Общение"
+				},
+				"messages": {
+					"success": "Имя канала успешно изменено",
+					"cooldown": "Подождите {{remainingMinutes}} мин. перед следующей сменой имени"
+				}
+			},
+			"channelLimit": {
+				"title": "Изменить лимит пользователей",
+				"form": {
+					"label": "Введите лимит",
+					"placeholder": "0 (без ограничений)"
+				},
+				"messages": {
+					"success": "Лимит успешно изменён",
+					"invalid": "Введите число от 0 до 99 (0 — без ограничений)"
+				}
+			}
+		}
+	},
+	"events": {
+		"voiceHub": {
+			"title": "Добро пожаловать в ваш временный голосовой канал!",
+			"description": {
+				"customize": "Вы можете изменить параметры канала, используя опции ниже.\n",
+				"important": "Это **временный** канал — он будет удалён, если в нём никого не останется."
+			},
+			"messages": {
+				"permissionsUpdated": "Права канала успешно обновлены"
+			}
+		}
+	}
+}
