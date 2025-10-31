@@ -33,7 +33,7 @@ export default class SetActivity {
 				},
 			]
 
-			const activity = activities[this.activityIndex]
+			const activity = activities[activityIndex]
 
 			if (client.user) {
 				await client.user.setActivity(activity)
