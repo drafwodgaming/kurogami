@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  discordbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kurogami
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+    networks:
+      - botnet
+    restart: always
+
+networks:
+  botnet:
+    driver: bridge

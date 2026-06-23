@@ -1,0 +1,223 @@
+{
+	"commands": {
+		"help": {
+			"title": "**Панель допомоги**",
+			"description": "Вітаю тебе, мандрівнику. Я Kurogami. Тут ти можеш дізнатися всі мої команди та всю необхідну інформацію.",
+			"stats": "**Серверів:** `{{serversCount}}` • **Користувачів:** `{{usersCount}}`",
+			"sections": {
+				"commandsSection": {
+					"title": "**Список команд**",
+					"description": "Ось всі команди, які я вмію виконувати:",
+					"list": {
+						"guildInfo": "Переглянути інформацію про сервер",
+						"channelsSetup": "Налаштувати канали бота",
+						"localeSet": "Налаштувати мову бота"
+					}
+				}
+			}
+		},
+		"locale": {
+			"messages": {
+				"success": "{{flag}} **Мова встановлена на {{language}}**"
+			}
+		},
+		"guildInfo": {
+			"fallbacks": {
+				"description": "> {{guildDescription}}",
+				"noDescription": "> Опис відсутній"
+			},
+			"members": {
+				"title": "### Учасники [ {{totalMembersCount}} ]",
+				"breakdown": {
+					"users": "- **Користувачі:** `{{nonBotMembersCount}}`",
+					"bots": "- **Боти:** `{{botMembersCount}}`"
+				}
+			},
+			"channels": {
+				"title": "### Канали [ {{totalChannels}} ]",
+				"text": {
+					"title": "- {{textChannelsIco}} **Текстові:** `{{textChannels}}`"
+				},
+				"voice": {
+					"title": " - {{voiceChannelsIco}} **Голосові:** `{{voiceChannels}}`"
+				},
+				"category": {
+					"title": "- {{categoryChannelsIco}} **Категорії:** `{{categoryChannels}}`"
+				},
+				"stage": {
+					"title": "- {{stageChannelsIco}} **Трибуни:** `{{stageChannels}}`"
+				},
+				"forum": {
+					"title": "- {{forumChannelsIco}} **Форуми:** `{{forumChannels}}`"
+				}
+			},
+			"emojis": {
+				"title": "### Емодзі [ {{totalEmojisCount}} ]",
+				"breakdown": {
+					"animated": "- **Анімовані:** `{{animatedEmojisCount}}`",
+					"static": "- **Статичні:** `{{staticEmojisCount}}`"
+				}
+			},
+			"roles": {
+				"title": "### Ролі [ {{totalRolesCount}} ]",
+				"preview": "> {{rolesPreview}}"
+			}
+		}
+	},
+	"components": {
+		"buttons": {
+			"help": {
+				"invite": {
+					"label": "Запросити бота"
+				},
+				"support": {
+					"label": "Сервер підтримки"
+				}
+			}
+		},
+		"menus": {
+			"help": {
+				"placeholder": "Нічого не вибрано",
+				"options": {
+					"commands": {
+						"label": "Команди",
+						"description": "Список усіх доступних команд"
+					}
+				}
+			},
+			"voiceHub": {
+				"channelSettings": {
+					"placeholder": "Змінити налаштування каналу",
+					"options": {
+						"name": {
+							"label": "Ім'я",
+							"description": "Змінити назву каналу"
+						},
+						"limit": {
+							"label": "Ліміт",
+							"description": "Змінити ліміт користувачів"
+						},
+						"persistent": {
+							"label": "Постійний",
+							"description": "Зробити канал постійним"
+						}
+					}
+				},
+				"channelPermissions": {
+					"placeholder": "Змінити права доступу",
+					"options": {
+						"lock": {
+							"label": "Заблокувати",
+							"description": "Заблокувати канал"
+						},
+						"unlock": {
+							"label": "Розблокувати",
+							"description": "Розблокувати канал"
+						}
+					}
+				},
+				"channelInvite": {
+					"placeholder": "Виберіть учасника",
+					"messages": {
+						"success": "Користувач запрошений до каналу!",
+						"error": "У користувача відключені ЛС"
+					},
+					"options": {
+						"invite": {
+							"label": "Запросити",
+							"description": "Запросити користувача до каналу"
+						}
+					}
+				}
+			}
+		},
+		"modals": {
+			"channelName": {
+				"title": "Змінити назву каналу",
+				"form": {
+					"label": "Введіть нову назву каналу",
+					"placeholder": "Наприклад: Спілкування"
+				},
+				"messages": {
+					"success": "Ім'я каналу успішно змінено",
+					"cooldown": "Будь ласка, зачекайте {{remainingMinutes}} хв. перед наступною зміною імені."
+				}
+			},
+			"channelLimit": {
+				"title": "Змінити ліміт користувачів",
+				"form": {
+					"label": "Введіть ліміт",
+					"placeholder": "0 (без обмежень)"
+				},
+				"messages": {
+					"success": "Ліміт успішно змінено",
+					"invalid": "Введіть число від 0 до 99 (0 — без обмежень)."
+				}
+			},
+			"channelSetup": {
+				"title": "Налаштування каналів",
+				"form": {
+					"leaveChannel": {
+						"label": "Канал для прощальних повідомлень",
+						"description": "Виберіть канал для прощальних повідомлень.",
+						"placeholder": "Виберіть канал...",
+						"messages": {
+							"success": "Канал для прощальних повідомлень встановлено на <#{{channelId}}>.",
+							"alreadySet": "Цей канал вже був налаштований раніше."
+						}
+					},
+					"voiceHub": {
+						"label": "Голосовий хаб",
+						"description": "Виберіть канал для створення тимчасових голосових кімнат.",
+						"placeholder": "Виберіть канал...",
+						"messages": {
+							"success": "Голосовий хаб встановлено на <#{{channelId}}>.",
+							"alreadySet": "Цей канал вже був налаштований раніше."
+						}
+					},
+					"welcomeChannel": {
+						"label": "Канал для привітань",
+						"description": "Виберіть канал для вітальних повідомлень.",
+						"placeholder": "Виберіть канал...",
+						"messages": {
+							"success": "Канал для привітань встановлено на <#{{channelId}}>.",
+							"alreadySet": "Цей канал вже був налаштований раніше."
+						}
+					}
+				},
+				"response": {
+					"title": "Налаштування каналів",
+					"description": "Ось результати налаштування ваших каналів:"
+				}
+			}
+		}
+	},
+	"events": {
+		"voiceHub": {
+			"description": {
+				"customize": "Ви можете змінити параметри каналу, використовуючи опції нижче.\n",
+				"important": "Це **тимчасовий** голосовий канал, який буде видалено, якщо в ньому не залишиться."
+			},
+			"messages": {
+				"permissionsUpdated": "Права голосового каналу успішно оновлені",
+				"persistent": {
+					"success": {
+						"enabled": "Канал тепер постійний.",
+						"disabled": "Канал більше не постійний."
+					},
+					"error": {
+						"not_creator": "Тільки власник каналу може змінювати це налаштування."
+					}
+				}
+			},
+			"persistenceStatus": {
+				"persistent": {
+					"label": "Постійний"
+				},
+				"temporary": {
+					"label": "Тимчасовий"
+				}
+			}
+		}
+	}
+}

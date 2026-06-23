@@ -1,0 +1,10 @@
+package-lock.json
+nodemon*
+.env
+.prettierrc
+eslint*
+/node_modules
+/.vscode
+/.yoyo
+/.idea
+/.github/workflows/deploy.yml

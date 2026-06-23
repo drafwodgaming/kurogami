@@ -1,0 +1,53 @@
+{
+	"name": "kurogami",
+	"description": "Bot For Discord",
+	"author": {
+		"name": "drafwod",
+		"url": "https://github.com/drafwodgaming"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/drafwodgaming/kurogami.git"
+	},
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"main": "src/index.js",
+	"version": "2.0.0",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"dev": "cross-env NODE_ENV=development nodemon .",
+		"prod": "node .",
+		"lint:js": "eslint .",
+		"lint:js:fix": "eslint . --fix"
+	},
+	"dependencies": {
+		"@napi-rs/canvas": "^1.0.0",
+		"chalk": "^5.6.2",
+		"cross-env": "^10.1.0",
+		"date-fns": "^4.4.0",
+		"discord.js": "^14.26.4",
+		"dotenv": "^17.4.2",
+		"fast-glob": "^3.3.3",
+		"i18next": "^26.3.0",
+		"i18next-fs-backend": "^2.6.6",
+		"mongoose": "^9.6.3",
+		"winston": "^3.19.0"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"eslint": "^10.4.1",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-n": "^18.0.1",
+		"eslint-plugin-prettier": "^5.5.6",
+		"eslint-plugin-promise": "^7.3.0",
+		"eslint-plugin-security": "^4.0.0",
+		"eslint-plugin-unicorn": "^68.0.0",
+		"globals": "^17.6.0",
+		"nodemon": "^3.1.14"
+	},
+	"overrides": {
+		"undici": "^6.27.0"
+	}
+}
