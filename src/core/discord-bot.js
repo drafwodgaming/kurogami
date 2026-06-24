@@ -35,7 +35,7 @@ const createShutdown = (client, logger) => {
 		await client.destroy()
 		logger.info('✅ Bot shut down successfully')
 
-		await new Promise(resolve => logger.on('finish', resolve))
+		await new Promise(resolve => setTimeout(resolve, 200))
 		process.exit(reason === 'startup_error' ? 1 : 0)
 	}
 }
