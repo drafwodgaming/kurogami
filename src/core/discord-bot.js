@@ -60,7 +60,7 @@ const startBot = async logger => {
 	const client = new Client({ intents: INTENTS })
 	const shutdown = createShutdown(client, logger)
 
-	setupProcessListeners(shutdown)
+	setupProcessListeners(shutdown, logger)
 
 	const [commands, components] = await Promise.all([
 		loadCommands(logger),
