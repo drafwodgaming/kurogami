@@ -61,7 +61,7 @@ const buildVoiceHubContainer = (locale, isPersistent) => {
 						'components.menus.voiceHub.channelSettings.options.persistent.description'
 					),
 					value: 'channelPersistent',
-					emoji: '📌',
+					emoji: emojis.pinChannel,
 				},
 			])
 	)

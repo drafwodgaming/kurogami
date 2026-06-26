@@ -1,41 +1,78 @@
 services:
-  discordbot:
+  bot:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: kurogami
-    env_file: .env
+    image: discord-bot:latest
+    container_name: discord-bot
+    restart: unless-stopped
+    env_file:
+      - .env
     environment:
-      - NODE_ENV=production
-    networks:
-      - botnet
-    restart: always
+      NODE_ENV: production
+      TZ: Europe/Moscow
     depends_on:
       mongo:
         condition: service_healthy
+    networks:
+      - internal
 
   mongo:
     image: mongo:8
     container_name: mongodb
-    ports:
-      - '127.0.0.1:27017:27017'
+    restart: unless-stopped
+    command: ["mongod", "--auth"]
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      TZ: Europe/Moscow
     volumes:
-      - mongo_data:/data/db
+      - mongo:/data/db
     networks:
-      - botnet
-    restart: always
+      - internal
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: >
+        mongosh --quiet
+        --username ${MONGO_ROOT_USERNAME}
+        --password ${MONGO_ROOT_PASSWORD}
+        --authenticationDatabase admin
+        --eval "db.adminCommand('ping').ok"
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 20s
+
+  backup:
+    image: mongo:8
+    profiles: ["backup"]
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - internal
+    volumes:
+      - ./backups:/backups
+    entrypoint:
+      - sh
+      - -c
+      - |
+        set -e
+
+        mongodump \
+          --host mongo \
+          --username "${MONGO_ROOT_USERNAME}" \
+          --password "${MONGO_ROOT_PASSWORD}" \
+          --authenticationDatabase admin \
+          --db discord-bot-prod \
+          --archive=/backups/backup-$(date +%F-%H-%M).gz \
+          --gzip
+
+        echo "backup done"
 
 volumes:
-  mongo_data:
+  mongo:
+    name: mongodb
 
 networks:
-  botnet:
-    driver: bridge
+  internal:
+    name: botnet
