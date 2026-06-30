@@ -1,6 +1,7 @@
-FROM node:latest
+FROM node:20-alpine
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
-COPY . .
+RUN npm ci --omit=dev
+COPY --chown=node:node . .
+USER node
 CMD ["npm", "run", "prod"]
