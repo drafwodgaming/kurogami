@@ -1,5 +1,5 @@
 const colors = {
-	bot: 'rgb(81, 120, 200);',
+	bot: 'rgb(81, 120, 200)',
 	success: 'rgb(144, 238, 144)',
 	white: 'rgb(240, 240, 240)',
 	edit: 'rgb(100, 149, 237)',
@@ -52,10 +52,7 @@ const getColor = (name, format) => {
 			return `#${hexNumber.toString(hexBase).slice(1).padStart(hexLength, '0')}`
 		}
 		case '0x': {
-			const hexNumber =
-				redValue * redMultiplier + greenValue * greenMultiplier + blueValue * blueMultiplier
-
-			return hexNumber
+			return redValue * redMultiplier + greenValue * greenMultiplier + blueValue * blueMultiplier
 		}
 		case 'rgb':
 		default:
