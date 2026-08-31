@@ -5,50 +5,51 @@ import buildVoiceHubContainer from '../../utils/voiceHub/build-voice-hub-contain
 
 const channelPermissionMenu = {
 	id: 'channelPermission',
+
 	async execute(interaction) {
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral })
+		await interaction.deferUpdate()
 
 		const locale = await getLocalizedText(interaction)
-		const [selectedAction] = interaction.values
+		const [action] = interaction.values
 
-		const voiceTempChannelData = await voiceTempChannelSchema.findOne({
+		const channelData = await voiceTempChannelSchema.findOne({
 			ChannelId: interaction.channelId,
 		})
 
-		if (!voiceTempChannelData) {
-			return await interaction.editReply({
+		if (!channelData) {
+			return interaction.followUp({
 				content: locale('events.voiceHub.messages.channelNotFound'),
+				flags: MessageFlags.Ephemeral,
 			})
 		}
 
-		switch (selectedAction) {
-			case 'channelLock':
-			case 'channelUnlock': {
-				await interaction.channel.permissionOverwrites.edit(
-					interaction.channel.guild.roles.everyone,
-					{ Connect: selectedAction === 'channelLock' ? false : true }
-				)
+		if (action === 'channelInvite') {
+			const userSelector = new UserSelectMenuBuilder()
+				.setCustomId('inviteUser')
+				.setPlaceholder(locale('components.menus.voiceHub.channelInvite.placeholder'))
 
-				await interaction.editReply({
-					content: locale('events.voiceHub.messages.permissionsUpdated'),
-				})
-				break
-			}
+			await interaction.message.edit({
+				components: [buildVoiceHubContainer(locale, channelData.isPersistent)],
+			})
 
-			case 'channelInvite': {
-				const userSelector = new UserSelectMenuBuilder()
-					.setCustomId('inviteUser')
-					.setPlaceholder(locale('components.menus.voiceHub.channelInvite.placeholder'))
-
-				await interaction.editReply({
-					components: [new ActionRowBuilder().addComponents(userSelector)],
-				})
-				break
-			}
+			return interaction.followUp({
+				components: [new ActionRowBuilder().addComponents(userSelector)],
+				flags: MessageFlags.Ephemeral,
+			})
 		}
 
-		const container = buildVoiceHubContainer(locale, voiceTempChannelData.isPersistent)
-		await interaction.message.edit({ components: [container] }).catch(() => {})
+		await interaction.channel.permissionOverwrites.edit(interaction.guild.roles.everyone, {
+			Connect: action !== 'channelLock',
+		})
+
+		await interaction.message.edit({
+			components: [buildVoiceHubContainer(locale, channelData.isPersistent)],
+		})
+
+		return interaction.followUp({
+			content: locale('events.voiceHub.messages.permissionsUpdated'),
+			flags: MessageFlags.Ephemeral,
+		})
 	},
 }
 

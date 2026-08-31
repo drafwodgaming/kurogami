@@ -1,37 +1,38 @@
 import chalk from 'chalk'
 import winston from 'winston'
 
-const { combine, timestamp, printf, errors, splat } = winston.format
-
-const LEVEL_STYLES = {
-	error: { priority: 0, color: chalk.bold.red },
-	warn: { priority: 1, color: chalk.bold.yellow },
-	info: { priority: 2, color: chalk.bold.green },
-	debug: { priority: 3, color: chalk.bold.magenta },
+const levels = {
+	error: 0,
+	warn: 1,
+	info: 2,
+	debug: 3,
 }
 
-const WINSTON_LEVELS = Object.fromEntries(
-	Object.entries(LEVEL_STYLES).map(([name, { priority }]) => [name, priority])
-)
+const colors = {
+	error: chalk.bold.red,
+	warn: chalk.bold.yellow,
+	info: chalk.bold.green,
+	debug: chalk.bold.magenta,
+}
 
-const consoleFormat = combine(
-	errors({ stack: true }),
-	splat(),
-	timestamp({ format: 'HH:mm:ss' }),
-	printf(({ timestamp: ts, level, message, stack }) => {
-		const style = LEVEL_STYLES[level] ?? { color: chalk.white }
-		const tag = chalk.gray(`[${level.toUpperCase()}]`)
-		const stackStr = stack ? `\n${chalk.gray(stack)}` : ''
-		return `${chalk.gray(ts)} ${tag} ${style.color(message)}${stackStr}`
+const format = winston.format.combine(
+	winston.format.errors({ stack: true }),
+	winston.format.splat(),
+	winston.format.timestamp({ format: 'HH:mm:ss' }),
+	winston.format.printf(({ timestamp, level, message, stack }) => {
+		const color = colors[level] ?? chalk.white
+		const stackTrace = stack ? `\n${chalk.gray(stack)}` : ''
+
+		return `${chalk.gray(timestamp)} ${chalk.gray(`[${level.toUpperCase()}]`)} ${color(message)}${stackTrace}`
 	})
 )
 
-const createLogger = (level = 'info') => {
-	return winston.createLogger({
-		levels: WINSTON_LEVELS,
+const createLogger = (level = 'info') =>
+	winston.createLogger({
+		levels,
 		level: level.toLowerCase(),
-		transports: [new winston.transports.Console({ format: consoleFormat })],
+		format,
+		transports: [new winston.transports.Console()],
 	})
-}
 
 export default createLogger

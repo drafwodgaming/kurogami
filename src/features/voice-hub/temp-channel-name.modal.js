@@ -4,43 +4,35 @@ import voiceTempChannelSchema from '../../schemas/voice-temp-channel.schema.js'
 
 const tempChannelNameModal = {
 	id: 'tempChannelName',
+
 	async execute(interaction) {
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
 		const locale = await getLocalizedText(interaction)
+		const { guild, channel, fields } = interaction
 
-		const channelName = interaction.fields.getTextInputValue('tempChannelNameInput')
+		const channelName = fields.getTextInputValue('tempChannelNameInput')
+		const now = Date.now()
 
-		const currentTime = Date.now()
-		const fiveMinutes = 300_000
-		const oneMinute = 60_000
-
-		const existingChannel = await voiceTempChannelSchema.findOne({
-			Guild: interaction.guild.id,
-			ChannelId: interaction.channel.id,
-		})
-
-		if (existingChannel) {
-			if (currentTime - existingChannel.RenameTime < fiveMinutes) {
-				const remainingTime = fiveMinutes - (currentTime - existingChannel.RenameTime)
-				const remainingMinutes = Math.ceil(remainingTime / oneMinute)
-
-				return interaction.editReply(
-					locale('components.modals.channelName.messages.cooldown', {
-						remainingMinutes,
-					})
-				)
-			}
-		}
+		await channel.setName(channelName)
 
 		await voiceTempChannelSchema.findOneAndUpdate(
-			{ Guild: interaction.guild.id, ChannelId: interaction.channel.id },
-			{ $set: { ChannelName: channelName, RenameTime: currentTime } },
+			{
+				Guild: guild.id,
+				ChannelId: channel.id,
+			},
+			{
+				$set: {
+					ChannelName: channelName,
+					RenameTime: now,
+				},
+			},
 			{ upsert: true }
 		)
 
-		await interaction.channel.setName(channelName)
-		await interaction.editReply(locale('components.modals.channelName.messages.success'))
+		return interaction.editReply({
+			content: locale('components.modals.channelName.messages.success'),
+		})
 	},
 }
 

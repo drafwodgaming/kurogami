@@ -1,23 +1,20 @@
 import {
-	ActionRowBuilder,
+	LabelBuilder,
+	MessageFlags,
 	ModalBuilder,
 	TextInputBuilder,
 	TextInputStyle,
-	UserSelectMenuBuilder,
 } from 'discord.js'
 import getLocalizedText from '../../utils/general/get-locale.js'
 import voiceTempChannelSchema from '../../schemas/voice-temp-channel.schema.js'
 import buildVoiceHubContainer from '../../utils/voiceHub/build-voice-hub-container.js'
 
-const MODAL_CONFIGS = {
-	channelName: {
-		modalId: 'tempChannelName',
-		inputId: 'tempChannelNameInput',
-	},
-	channelLimit: {
-		modalId: 'tempChannelLimit',
-		inputId: 'tempChannelLimitInput',
-	},
+const RENAME_COOLDOWN = 5 * 60 * 1000
+const MINUTE = 60 * 1000
+
+const MODALS = {
+	channelName: ['tempChannelName', 'tempChannelNameInput'],
+	channelLimit: ['tempChannelLimit', 'tempChannelLimitInput'],
 }
 
 const tempChannelSettingsMenu = {
@@ -25,7 +22,7 @@ const tempChannelSettingsMenu = {
 
 	async execute(interaction) {
 		const locale = await getLocalizedText(interaction)
-		const [type] = interaction.values
+		const [action] = interaction.values
 
 		const channelData = await voiceTempChannelSchema.findOne({
 			ChannelId: interaction.channelId,
@@ -35,71 +32,71 @@ const tempChannelSettingsMenu = {
 
 		const container = buildVoiceHubContainer(locale, channelData.isPersistent)
 
-		const modalConfig = MODAL_CONFIGS[type]
+		const modalConfig = MODALS[action]
 
 		if (modalConfig) {
-			const { modalId, inputId } = modalConfig
+			await interaction.message.edit({
+				components: [container],
+			})
+
+			if (action === 'channelName') {
+				const elapsed = Date.now() - (channelData.RenameTime ?? 0)
+
+				if (elapsed < RENAME_COOLDOWN) {
+					const remainingMinutes = Math.ceil((RENAME_COOLDOWN - elapsed) / MINUTE)
+
+					return interaction.reply({
+						content: locale('components.modals.channelName.messages.cooldown', {
+							remainingMinutes,
+						}),
+						flags: MessageFlags.Ephemeral,
+					})
+				}
+			}
+
+			const [modalId, inputId] = modalConfig
 
 			const input = new TextInputBuilder()
 				.setCustomId(inputId)
-				.setPlaceholder(locale(`components.modals.${type}.form.placeholder`))
-				.setLabel(locale(`components.modals.${type}.form.label`))
+				.setPlaceholder(locale(`components.modals.${action}.form.placeholder`))
 				.setStyle(TextInputStyle.Short)
 				.setRequired(true)
 
+			const label = new LabelBuilder()
+				.setLabel(locale(`components.modals.${action}.form.label`))
+				.setTextInputComponent(input)
+
 			const modal = new ModalBuilder()
 				.setCustomId(modalId)
-				.setTitle(locale(`components.modals.${type}.title`))
-				.addComponents(new ActionRowBuilder().addComponents(input))
+				.setTitle(locale(`components.modals.${action}.title`))
+				.addLabelComponents(label)
 
-			await interaction.showModal(modal)
+			return interaction.showModal(modal)
+		}
 
-			return interaction.message.edit({
-				components: [container],
+		if (action !== 'channelPersistent') return
+
+		if (channelData.Creator !== interaction.user.id) {
+			return interaction.reply({
+				content: locale('events.voiceHub.messages.persistent.error.not_creator'),
+				flags: MessageFlags.Ephemeral,
 			})
 		}
 
-		if (type === 'channelInvite') {
-			const userSelector = new UserSelectMenuBuilder()
-				.setCustomId('inviteUser')
-				.setPlaceholder(locale('components.menus.voiceHub.channelInvite.placeholder'))
+		channelData.isPersistent = !channelData.isPersistent
+		await channelData.save()
 
-			await interaction.update({
-				components: [new ActionRowBuilder().addComponents(userSelector)],
-			})
+		await interaction.update({
+			components: [buildVoiceHubContainer(locale, channelData.isPersistent)],
+		})
 
-			return
-		}
-
-		if (type === 'channelPersistent') {
-			await interaction.deferUpdate()
-
-			if (channelData.Creator !== interaction.user.id) {
-				return interaction.followUp({
-					content: locale('events.voiceHub.messages.persistent.error.not_creator'),
-					ephemeral: true,
-				})
-			}
-
-			channelData.isPersistent = !channelData.isPersistent
-			await channelData.save()
-
-			await interaction.followUp({
-				content: locale(
-					`events.voiceHub.messages.persistent.success.${
-						channelData.isPersistent ? 'enabled' : 'disabled'
-					}`
-				),
-				ephemeral: true,
-			})
-
-			return interaction.message.edit({
-				components: [buildVoiceHubContainer(locale, channelData.isPersistent)],
-			})
-		}
-
-		return interaction.update({
-			components: [container],
+		return interaction.followUp({
+			content: locale(
+				`events.voiceHub.messages.persistent.success.${
+					channelData.isPersistent ? 'enabled' : 'disabled'
+				}`
+			),
+			flags: MessageFlags.Ephemeral,
 		})
 	},
 }

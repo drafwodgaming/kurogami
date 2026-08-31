@@ -24,37 +24,46 @@ const getConfig = () => ({
 const createShutdown = (client, logger) => {
 	let isShuttingDown = false
 
-	return async (reason = 'unknown') => {
+	return async reason => {
 		if (isShuttingDown) return
 		isShuttingDown = true
 
-		process.stdout.write('\n')
-		logger.warn(`🔥 Shutting down... Reason: ${reason}`)
+		logger.warn(`Shutting down... Reason: ${reason}`)
 
-		await dbService.disconnect()
-		await client.destroy()
-		logger.info('✅ Bot shut down successfully')
+		await Promise.allSettled([dbService.disconnect(), client.destroy()])
 
-		await new Promise(resolve => setTimeout(resolve, 200))
-		process.exit(reason === 'startup_error' ? 1 : 0)
+		logger.info('Bot shut down successfully')
+		process.exit(0)
 	}
 }
 
 const setupProcessListeners = (shutdown, logger) => {
 	process.once('SIGINT', () => shutdown('SIGINT'))
 	process.once('SIGTERM', () => shutdown('SIGTERM'))
+
 	process.on('unhandledRejection', error => {
-		logger.error('❌ Unhandled Rejection:', error)
+		logger.error('Unhandled Rejection:', error)
 		shutdown('unhandled_rejection')
 	})
+
 	process.on('uncaughtException', error => {
-		logger.error('❌ Uncaught Exception:', error)
+		logger.error('Uncaught Exception:', error)
 		shutdown('uncaught_exception')
 	})
 }
 
+const loadBotData = async (config, logger) => {
+	const [commands, components] = await Promise.all([
+		loadCommands(logger),
+		loadComponents(logger),
+		dbService.connect(config.mongoUrl, logger),
+	])
+
+	return { commands, components }
+}
+
 const startBot = async logger => {
-	logger.info('🚀 Starting Discord Bot...')
+	logger.info('Starting Discord Bot...')
 
 	const config = getConfig()
 	const client = new Client({ intents: INTENTS })
@@ -62,21 +71,19 @@ const startBot = async logger => {
 
 	setupProcessListeners(shutdown, logger)
 
-	const [commands, components] = await Promise.all([
-		loadCommands(logger),
-		loadComponents(logger),
-		dbService.connect(config.mongoUrl, logger),
-	])
+	const { commands, components } = await loadBotData(config, logger)
 
 	await loadEvents(client, logger, { commands, ...components })
 
-	const commandData = [...commands.values()].map(c => c.data)
-	if (commandData.length > 0) {
+	const commandData = [...commands.values()].map(command => command.data)
+
+	if (commandData.length) {
 		await registerCommands(config, logger, commandData)
 	}
 
 	await client.login(config.token)
-	logger.info(`✅ Bot started as ${client.user?.displayName}`)
+
+	logger.info(`Bot started as ${client.user?.displayName ?? client.user?.username}`)
 }
 
 export default startBot

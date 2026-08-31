@@ -8,3 +8,4 @@ eslint*
 /.yoyo
 /.idea
 /.github/workflows/deploy.yml
+shop/

@@ -10,7 +10,7 @@ import {
 } from 'discord.js'
 import getLocalizedText from '../../../utils/general/get-locale.js'
 
-const channelSetupFields = [
+const CHANNEL_SETUP_FIELDS = [
 	{
 		id: 'chooseLeaveChannel',
 		label: 'components.modals.channelSetup.form.leaveChannel.label',
@@ -33,6 +33,21 @@ const channelSetupFields = [
 		channelType: ChannelType.GuildText,
 	},
 ]
+
+const createChannelField = ({ id, label, description, placeholder, channelType }, locale) => {
+	const select = new ChannelSelectMenuBuilder()
+		.setCustomId(id)
+		.setPlaceholder(locale(placeholder))
+		.setChannelTypes(channelType)
+		.setMinValues(1)
+		.setMaxValues(1)
+		.setRequired(false)
+
+	return new LabelBuilder()
+		.setLabel(locale(label))
+		.setDescription(locale(description))
+		.setChannelSelectMenuComponent(new ActionRowBuilder().addComponents(select).components[0])
+}
 
 const setupChannelsCommand = {
 	data: new SlashCommandBuilder()
@@ -57,30 +72,12 @@ const setupChannelsCommand = {
 	async actions(interaction) {
 		const locale = await getLocalizedText(interaction)
 
-		const components = channelSetupFields.map(
-			({ id, label, description, placeholder, channelType }) => {
-				const channelSelector = new ActionRowBuilder().addComponents(
-					new ChannelSelectMenuBuilder()
-						.setCustomId(id)
-						.setPlaceholder(locale(placeholder))
-						.setChannelTypes(channelType)
-						.setMinValues(1)
-						.setMaxValues(1)
-						.setDisabled(false)
-						.setRequired(false)
-				).components[0]
-
-				return new LabelBuilder()
-					.setLabel(locale(label))
-					.setDescription(locale(description))
-					.setChannelSelectMenuComponent(channelSelector)
-			}
-		)
+		const fields = CHANNEL_SETUP_FIELDS.map(field => createChannelField(field, locale))
 
 		const modal = new ModalBuilder()
 			.setCustomId('setupChannelsModal')
 			.setTitle(locale('components.modals.channelSetup.title'))
-			.addLabelComponents(...components)
+			.addLabelComponents(...fields)
 
 		return interaction.showModal(modal)
 	},

@@ -1,19 +1,21 @@
 import {
-	ChannelType,
-	InteractionContextType,
-	MessageFlags,
-	SlashCommandBuilder,
+	ActionRowBuilder,
 	ButtonBuilder,
 	ButtonStyle,
-	ActionRowBuilder,
-	TextDisplayBuilder,
+	ChannelType,
+	ContainerBuilder,
+	InteractionContextType,
+	MessageFlags,
 	SeparatorBuilder,
 	SeparatorSpacingSize,
-	ContainerBuilder,
+	SlashCommandBuilder,
+	TextDisplayBuilder,
 } from 'discord.js'
 import emojis from '../../../config/bot/emojis.json' with { type: 'json' }
 import getColor from '../../utils/general/get-color.js'
 import getLocalizedText from '../../utils/general/get-locale.js'
+
+const MAX_ROLES_PREVIEW = 15
 
 const guildInfoCommand = {
 	data: new SlashCommandBuilder()
@@ -38,14 +40,15 @@ const guildInfoCommand = {
 		await interaction.deferReply()
 
 		const locale = await getLocalizedText(interaction)
-		const defaultBotColor = getColor('bot', '0x')
 		const { guild } = interaction
 
-		await guild.members.fetch()
+		if (guild.members.cache.size < guild.memberCount) {
+			await guild.members.fetch()
+		}
 
 		const stats = getGuildStats(guild)
 
-		const headerBuilder = new ActionRowBuilder().addComponents(
+		const header = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId('guildInfoHeader')
 				.setLabel(guild.name)
@@ -53,16 +56,15 @@ const guildInfoCommand = {
 				.setDisabled(true)
 		)
 
-		const hasDescription = Boolean(guild.description)
 		const description = new TextDisplayBuilder().setContent(
-			hasDescription
+			guild.description
 				? locale('commands.guildInfo.fallbacks.description', {
 						guildDescription: guild.description,
 					})
 				: locale('commands.guildInfo.fallbacks.noDescription')
 		)
 
-		const membersBuilder = new TextDisplayBuilder().setContent(
+		const members = new TextDisplayBuilder().setContent(
 			[
 				locale('commands.guildInfo.members.title', {
 					totalMembersCount: guild.memberCount,
@@ -76,7 +78,7 @@ const guildInfoCommand = {
 			].join('\n')
 		)
 
-		const channelsBuilder = new TextDisplayBuilder().setContent(
+		const channels = new TextDisplayBuilder().setContent(
 			[
 				locale('commands.guildInfo.channels.title', {
 					totalChannels: stats.channels.total,
@@ -104,7 +106,7 @@ const guildInfoCommand = {
 			].join('\n')
 		)
 
-		const emojisBuilder = new TextDisplayBuilder().setContent(
+		const guildEmojis = new TextDisplayBuilder().setContent(
 			[
 				locale('commands.guildInfo.emojis.title', {
 					totalEmojisCount: stats.emojis.total,
@@ -118,7 +120,7 @@ const guildInfoCommand = {
 			].join('\n')
 		)
 
-		const rolesBuilder = new TextDisplayBuilder().setContent(
+		const roles = new TextDisplayBuilder().setContent(
 			[
 				locale('commands.guildInfo.roles.title', {
 					totalRolesCount: stats.roles.total,
@@ -132,25 +134,26 @@ const guildInfoCommand = {
 		const separator = new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Large)
 
 		const container = new ContainerBuilder()
-			.addActionRowComponents(headerBuilder)
+			.addActionRowComponents(header)
 			.addSeparatorComponents(separator)
-			.addTextDisplayComponents(description, membersBuilder)
+			.addTextDisplayComponents(description, members)
 			.addSeparatorComponents(separator)
-			.addTextDisplayComponents(channelsBuilder, emojisBuilder, rolesBuilder)
-			.setAccentColor(defaultBotColor)
+			.addTextDisplayComponents(channels, guildEmojis, roles)
+			.setAccentColor(getColor('bot', '0x'))
 
-		await interaction.editReply({
+		return interaction.editReply({
 			flags: MessageFlags.IsComponentsV2,
 			components: [container],
 		})
 	},
 }
 
-function getGuildStats(guild) {
-	const users = guild.members.cache.filter(member => !member.user.bot).size
-	const bots = guild.memberCount - users
+const getGuildStats = guild => {
+	const members = guild.members.cache
+	const bots = members.filter(member => member.user.bot).size
 
 	const channels = {
+		total: guild.channels.cache.size,
 		text: 0,
 		voice: 0,
 		categories: 0,
@@ -161,47 +164,44 @@ function getGuildStats(guild) {
 	for (const channel of guild.channels.cache.values()) {
 		switch (channel.type) {
 			case ChannelType.GuildText:
-				channels.text += 1
+				channels.text++
 				break
 			case ChannelType.GuildVoice:
-				channels.voice += 1
+				channels.voice++
 				break
 			case ChannelType.GuildCategory:
-				channels.categories += 1
+				channels.categories++
 				break
 			case ChannelType.GuildStageVoice:
-				channels.stage += 1
+				channels.stage++
 				break
 			case ChannelType.GuildForum:
-				channels.forum += 1
+				channels.forum++
 				break
 		}
 	}
-	channels.total = guild.channels.cache.size
 
-	const guildEmojis = {
-		total: guild.emojis.cache.size,
-		animated: guild.emojis.cache.filter(e => e.animated).size,
-	}
+	const guildEmojis = guild.emojis.cache
+	const animatedEmojis = guildEmojis.filter(emoji => emoji.animated).size
 
-	guildEmojis.static = guildEmojis.total - guildEmojis.animated
-
-	const maxRolesPreview = 15
-
-	const allRoles = guild.roles.cache
-	const preview = allRoles
-		.sorted((roleA, roleB) => roleB.position - roleA.position)
+	const roles = guild.roles.cache
+	const preview = roles
+		.sorted((a, b) => b.position - a.position)
 		.filter(role => role.id !== guild.id)
-		.first(maxRolesPreview)
+		.first(MAX_ROLES_PREVIEW)
 		.join(', ')
 
 	return {
-		users,
+		users: guild.memberCount - bots,
 		bots,
 		channels,
-		emojis: guildEmojis,
+		emojis: {
+			total: guildEmojis.size,
+			animated: animatedEmojis,
+			static: guildEmojis.size - animatedEmojis,
+		},
 		roles: {
-			total: allRoles.size,
+			total: roles.size,
 			preview,
 		},
 	}

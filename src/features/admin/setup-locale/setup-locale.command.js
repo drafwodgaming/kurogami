@@ -1,16 +1,16 @@
 import {
+	ContainerBuilder,
 	InteractionContextType,
 	MessageFlags,
 	PermissionFlagsBits,
 	SlashCommandBuilder,
-	ContainerBuilder,
 	TextDisplayBuilder,
 } from 'discord.js'
 import getColor from '../../../utils/general/get-color.js'
 import getLanguageFlag from '../../../utils/general/get-lang-flag.js'
 import getLanguageName from '../../../utils/general/get-lang-name.js'
 import getLocalizedText from '../../../utils/general/get-locale.js'
-import serverLocaleShema from '../../../schemas/server-locale.schema.js'
+import serverLocaleSchema from '../../../schemas/server-locale.schema.js'
 
 const setupLocaleCommand = {
 	data: new SlashCommandBuilder()
@@ -52,21 +52,23 @@ const setupLocaleCommand = {
 
 		const language = interaction.options.getString('language')
 
-		await serverLocaleShema.updateOne(
+		await serverLocaleSchema.updateOne(
 			{ Guild: interaction.guild.id },
-			{ $set: { Language: language } },
+			{ Language: language },
 			{ upsert: true }
 		)
 
 		const locale = await getLocalizedText(interaction)
-		const text = new TextDisplayBuilder().setContent(
-			locale('commands.locale.messages.success', {
-				flag: getLanguageFlag(language),
-				language: getLanguageName(language),
-			})
-		)
+
 		const container = new ContainerBuilder()
-			.addTextDisplayComponents(text)
+			.addTextDisplayComponents(
+				new TextDisplayBuilder().setContent(
+					locale('commands.locale.messages.success', {
+						flag: getLanguageFlag(language),
+						language: getLanguageName(language),
+					})
+				)
+			)
 			.setAccentColor(getColor('bot', '0x'))
 
 		return interaction.editReply({

@@ -3,6 +3,7 @@ import {
 	ButtonBuilder,
 	ButtonStyle,
 	ContainerBuilder,
+	InteractionContextType,
 	MessageFlags,
 	SeparatorBuilder,
 	SeparatorSpacingSize,
@@ -14,6 +15,8 @@ import emojis from '../../../config/bot/emojis.json' with { type: 'json' }
 import getColor from '../../utils/general/get-color.js'
 import getLocalizedText from '../../utils/general/get-locale.js'
 
+const INVITE_PERMISSIONS = BigInt('70368744177663')
+
 const helpCommand = {
 	data: new SlashCommandBuilder()
 		.setName('help')
@@ -22,48 +25,52 @@ const helpCommand = {
 			ru: 'Получить помощь и информацию о боте',
 			uk: 'Отримати довідку та інформацію про бота',
 		})
-		.setContexts('Guild', 'BotDM'),
+		.setContexts(InteractionContextType.Guild, InteractionContextType.BotDM),
+
 	async actions(interaction) {
 		await interaction.deferReply()
+
 		const locale = await getLocalizedText(interaction)
-		const defaultBotColor = getColor('bot', '0x')
+		const { client } = interaction
+		const { guilds } = client
 
-		const title = new TextDisplayBuilder().setContent(locale('commands.help.title'))
-		const description = new TextDisplayBuilder().setContent(locale('commands.help.description'))
-
-		const { guilds } = interaction.client
 		const serversCount = guilds.cache.size
-		const usersCount = [...guilds.cache.values()]
-			.reduce((acc, { memberCount }) => acc + memberCount, 0)
+		const usersCount = guilds.cache
+			.reduce((total, guild) => total + guild.memberCount, 0)
 			.toLocaleString()
 
+		const title = new TextDisplayBuilder().setContent(locale('commands.help.title'))
+
+		const description = new TextDisplayBuilder().setContent(locale('commands.help.description'))
+
 		const stats = new TextDisplayBuilder().setContent(
-			locale('commands.help.stats', { serversCount, usersCount })
+			locale('commands.help.stats', {
+				serversCount,
+				usersCount,
+			})
 		)
 
 		const helpSelector = new ActionRowBuilder().addComponents(
 			new StringSelectMenuBuilder()
 				.setCustomId('helpSelector')
 				.setPlaceholder(locale('components.menus.help.placeholder'))
-				.setOptions([
-					{
-						label: locale('components.menus.help.options.commands.label'),
-						description: locale('components.menus.help.options.commands.description'),
-						value: 'commands',
-						emoji: emojis.commands,
-					},
-				])
+				.addOptions({
+					label: locale('components.menus.help.options.commands.label'),
+					description: locale('components.menus.help.options.commands.description'),
+					value: 'commands',
+					emoji: emojis.commands,
+				})
 		)
 
-		const buttonsRow = new ActionRowBuilder().addComponents(
+		const buttons = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setLabel(locale('components.buttons.help.invite.label'))
 				.setStyle(ButtonStyle.Link)
 				.setEmoji(emojis.invite)
 				.setURL(
-					interaction.client.generateInvite({
+					client.generateInvite({
 						scopes: ['bot', 'applications.commands'],
-						permissions: BigInt('70368744177663'),
+						permissions: INVITE_PERMISSIONS,
 					})
 				),
 			new ButtonBuilder()
@@ -73,15 +80,13 @@ const helpCommand = {
 				.setURL('https://discord.gg/8WqMqCqt8e')
 		)
 
-		const separator = new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small)
-
 		const container = new ContainerBuilder()
 			.addTextDisplayComponents(title, description, stats)
-			.addSeparatorComponents(separator)
-			.addActionRowComponents(helpSelector, buttonsRow)
-			.setAccentColor(defaultBotColor)
+			.addSeparatorComponents(new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small))
+			.addActionRowComponents(helpSelector, buttons)
+			.setAccentColor(getColor('bot', '0x'))
 
-		await interaction.editReply({
+		return interaction.editReply({
 			flags: MessageFlags.IsComponentsV2,
 			components: [container],
 		})

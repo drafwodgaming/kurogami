@@ -1,26 +1,42 @@
 import { MessageFlags } from 'discord.js'
 import getLocalizedText from '../../utils/general/get-locale.js'
+import voiceTempChannelSchema from '../../schemas/voice-temp-channel.schema.js'
 
 const tempChannelInviteMenu = {
 	id: 'inviteUser',
+
 	async execute(interaction) {
 		const locale = await getLocalizedText(interaction)
-		const [selectedUserId] = interaction.values
-		let content
+		const [userId] = interaction.values
+
+		const channelData = await voiceTempChannelSchema.findOne({
+			ChannelId: interaction.channelId,
+		})
+
+		if (!channelData) {
+			return interaction.update({
+				components: [],
+			})
+		}
+
+		let message
 
 		try {
-			const selectedUser = await interaction.guild.members.fetch(selectedUserId)
+			const member = await interaction.guild.members.fetch(userId)
 
-			await selectedUser.send({
+			await member.send({
 				content: `You have been invited to join the channel: ${interaction.channel.url}`,
 			})
 
-			content = locale('components.menus.voiceHub.channelInvite.messages.success')
+			message = locale('components.menus.voiceHub.channelInvite.messages.success')
 		} catch {
-			content = locale('components.menus.voiceHub.channelInvite.messages.error')
+			message = locale('components.menus.voiceHub.channelInvite.messages.error')
 		}
 
-		await interaction.update({ content, components: [], flags: MessageFlags.Ephemeral })
+		return interaction.reply({
+			content: message,
+			flags: MessageFlags.Ephemeral,
+		})
 	},
 }
 

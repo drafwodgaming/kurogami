@@ -1,30 +1,30 @@
 import { ActivityType } from 'discord.js'
 
+const PRESENCE_INTERVAL = 45_000
+
 const setActivityEvent = {
 	name: 'clientReady',
 	once: true,
-	async execute(client) {
-		const presenceUpdateIntervalMs = 45_000
+
+	execute(client) {
 		let activityIndex = 0
 
-		const updatePresence = async () => {
-			await client.guilds.fetch()
-			let totalMembers = 0
-			for (const guild of client.guilds.cache.values()) {
-				totalMembers += guild.memberCount || guild.members.cache.size > 0
-			}
+		const updatePresence = () => {
+			const guilds = client.guilds.cache
+
+			const totalMembers = guilds.reduce((total, guild) => total + guild.memberCount, 0)
 
 			const activities = [
 				{
-					name: `Made by drafwod | Invite me`,
+					name: 'Made by drafwod | Invite me',
 					type: ActivityType.Custom,
 				},
 				{
-					name: `${client.guilds.cache.size} 寺 | Temples`,
+					name: `${guilds.size} 寺 | Temples`,
 					type: ActivityType.Watching,
 				},
 				{
-					name: `☁️ Stormgazing`,
+					name: '☁️ Stormgazing',
 					type: ActivityType.Playing,
 				},
 				{
@@ -33,17 +33,13 @@ const setActivityEvent = {
 				},
 			]
 
-			const activity = activities[activityIndex]
-
-			if (client.user) {
-				await client.user.setActivity(activity)
-			}
+			client.user.setActivity(activities[activityIndex])
 
 			activityIndex = (activityIndex + 1) % activities.length
 		}
 
-		await updatePresence()
-		setInterval(updatePresence, presenceUpdateIntervalMs)
+		updatePresence()
+		setInterval(updatePresence, PRESENCE_INTERVAL)
 	},
 }
 

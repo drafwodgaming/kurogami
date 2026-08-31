@@ -1,32 +1,29 @@
 const interactionCreateEvent = {
 	name: 'interactionCreate',
-	once: false,
+
 	async execute(interaction, context) {
 		const { customId, commandName } = interaction
 		const { commands, buttons, selectMenus, modals } = context
-		const command = commands.get(commandName)
 
 		if (interaction.isAutocomplete()) {
-			return command?.autocomplete?.(interaction)
+			return commands.get(commandName)?.autocomplete?.(interaction)
 		}
+
 		if (interaction.isChatInputCommand()) {
-			return command?.actions(interaction)
-		}
-		if (interaction.isMessageComponent() || interaction.isModalSubmit()) {
-			let component
-
-			if (interaction.isButton()) {
-				component = buttons.get(customId)
-			} else if (interaction.isAnySelectMenu()) {
-				component = selectMenus.get(customId)
-			} else {
-				component = modals.get(customId)
-			}
-
-			return component?.execute(interaction)
+			return commands.get(commandName)?.actions(interaction)
 		}
 
-		return null
+		if (interaction.isButton()) {
+			return buttons.get(customId)?.execute(interaction)
+		}
+
+		if (interaction.isAnySelectMenu()) {
+			return selectMenus.get(customId)?.execute(interaction, context)
+		}
+
+		if (interaction.isModalSubmit()) {
+			return modals.get(customId)?.execute(interaction)
+		}
 	},
 }
 
