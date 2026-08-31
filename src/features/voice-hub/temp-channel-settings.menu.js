@@ -1,81 +1,106 @@
-import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js'
+import {
+	ActionRowBuilder,
+	ModalBuilder,
+	TextInputBuilder,
+	TextInputStyle,
+	UserSelectMenuBuilder,
+} from 'discord.js'
 import getLocalizedText from '../../utils/general/get-locale.js'
 import voiceTempChannelSchema from '../../schemas/voice-temp-channel.schema.js'
 import buildVoiceHubContainer from '../../utils/voiceHub/build-voice-hub-container.js'
 
+const MODAL_CONFIGS = {
+	channelName: {
+		modalId: 'tempChannelName',
+		inputId: 'tempChannelNameInput',
+	},
+	channelLimit: {
+		modalId: 'tempChannelLimit',
+		inputId: 'tempChannelLimitInput',
+	},
+}
+
 const tempChannelSettingsMenu = {
 	id: 'channelSettings',
+
 	async execute(interaction) {
 		const locale = await getLocalizedText(interaction)
-		const [selectedAction] = interaction.values
+		const [type] = interaction.values
 
-		const tempChannelData = await voiceTempChannelSchema.findOne({
+		const channelData = await voiceTempChannelSchema.findOne({
 			ChannelId: interaction.channelId,
 		})
 
-		if (!tempChannelData) {
+		if (!channelData) return
+
+		const container = buildVoiceHubContainer(locale, channelData.isPersistent)
+
+		const modalConfig = MODAL_CONFIGS[type]
+
+		if (modalConfig) {
+			const { modalId, inputId } = modalConfig
+
+			const input = new TextInputBuilder()
+				.setCustomId(inputId)
+				.setPlaceholder(locale(`components.modals.${type}.form.placeholder`))
+				.setLabel(locale(`components.modals.${type}.form.label`))
+				.setStyle(TextInputStyle.Short)
+				.setRequired(true)
+
+			const modal = new ModalBuilder()
+				.setCustomId(modalId)
+				.setTitle(locale(`components.modals.${type}.title`))
+				.addComponents(new ActionRowBuilder().addComponents(input))
+
+			await interaction.showModal(modal)
+
+			return interaction.message.edit({
+				components: [container],
+			})
+		}
+
+		if (type === 'channelInvite') {
+			const userSelector = new UserSelectMenuBuilder()
+				.setCustomId('inviteUser')
+				.setPlaceholder(locale('components.menus.voiceHub.channelInvite.placeholder'))
+
+			await interaction.update({
+				components: [new ActionRowBuilder().addComponents(userSelector)],
+			})
+
 			return
 		}
 
-		switch (selectedAction) {
-			case 'channelName': {
-				const modal = new ModalBuilder()
-					.setTitle(locale('components.modals.channelName.title'))
-					.setCustomId('tempChannelName')
+		if (type === 'channelPersistent') {
+			await interaction.deferUpdate()
 
-				const input = new TextInputBuilder()
-					.setCustomId('tempChannelNameInput')
-					.setPlaceholder(locale('components.modals.channelName.form.placeholder'))
-					.setLabel(locale('components.modals.channelName.form.label'))
-					.setStyle(TextInputStyle.Short)
-					.setRequired(true)
-
-				modal.addComponents(new ActionRowBuilder().addComponents(input))
-				await interaction.showModal(modal)
-				break
-			}
-
-			case 'channelLimit': {
-				const modal = new ModalBuilder()
-					.setTitle(locale('components.modals.channelLimit.title'))
-					.setCustomId('tempChannelLimit')
-
-				const input = new TextInputBuilder()
-					.setCustomId('tempChannelLimitInput')
-					.setPlaceholder(locale('components.modals.channelLimit.form.placeholder'))
-					.setLabel(locale('components.modals.channelLimit.form.label'))
-					.setStyle(TextInputStyle.Short)
-					.setRequired(true)
-
-				modal.addComponents(new ActionRowBuilder().addComponents(input))
-				await interaction.showModal(modal)
-				break
-			}
-
-			case 'channelPersistent': {
-				await interaction.deferUpdate()
-
-				if (tempChannelData.Creator !== interaction.user.id) {
-					return await interaction.followUp({
-						content: locale('events.voiceHub.messages.persistent.error.not_creator'),
-						ephemeral: true,
-					})
-				}
-
-				tempChannelData.isPersistent = !tempChannelData.isPersistent
-				await tempChannelData.save()
-
-				await interaction.followUp({
-					content: locale(
-						`events.voiceHub.messages.persistent.success.${tempChannelData.isPersistent ? 'enabled' : 'disabled'}`
-					),
+			if (channelData.Creator !== interaction.user.id) {
+				return interaction.followUp({
+					content: locale('events.voiceHub.messages.persistent.error.not_creator'),
 					ephemeral: true,
 				})
-				break
 			}
+
+			channelData.isPersistent = !channelData.isPersistent
+			await channelData.save()
+
+			await interaction.followUp({
+				content: locale(
+					`events.voiceHub.messages.persistent.success.${
+						channelData.isPersistent ? 'enabled' : 'disabled'
+					}`
+				),
+				ephemeral: true,
+			})
+
+			return interaction.message.edit({
+				components: [buildVoiceHubContainer(locale, channelData.isPersistent)],
+			})
 		}
-		const container = buildVoiceHubContainer(locale, tempChannelData.isPersistent)
-		await interaction.message.edit({ components: [container] }).catch(() => {})
+
+		return interaction.update({
+			components: [container],
+		})
 	},
 }
 
