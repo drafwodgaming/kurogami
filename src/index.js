@@ -11,7 +11,7 @@ REQUIRED_ENV.forEach(key => {
 	process.env[key] = process.env[`${prefix}_${key}`]
 })
 
-const logger = createLogger(process.env.LOG_LEVEL || 'info')
+const logger = createLogger('info')
 
 const missing = REQUIRED_ENV.filter(k => !process.env[k])
 if (missing.length > 0) {
