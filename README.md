@@ -117,8 +117,3 @@ functionality may change over time.
 **drafwod**
 
 - GitHub: [@drafwodgaming](https://github.com/drafwodgaming)
-
----
-
-\<p align="center"> \<sub>Made with ♥ by drafwod\</sub> \<br /> \<sub>© Kurogami
-— All rights reserved to their respective owners.\</sub> \</p>
