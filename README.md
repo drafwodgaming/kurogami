@@ -1,26 +1,5 @@
 # ⛩️ Kurogami
 
-\<p align="center"> \<img
-src="[https://capsule-render.vercel.app/api?type=venom&color=0:0d0d0d,50:301b3f,100:6b2d5c&height=180&section=header&text=KUROGAMI&fontSize=58&fontColor=ffffff&animation=fadeIn&fontAlignY=45&desc=Discord%20Bot&descAlignY=68&descSize=16](https://capsule-render.vercel.app/api?type=venom&color=0:0d0d0d,50:301b3f,100:6b2d5c&height=180&section=header&text=KUROGAMI&fontSize=58&fontColor=ffffff&animation=fadeIn&fontAlignY=45&desc=Discord%20Bot&descAlignY=68&descSize=16)"
-width="100%" /> \</p>
-
-\<p align="center"> \<b>A Discord bot built with Node.js and discord.js.\</b>
-\<br /> Designed with modularity, maintainability and flexibility in mind. \</p>
-
-\<p align="center"> \<img
-src="[https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=nodedotjs&logoColor=white](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=nodedotjs&logoColor=white)"
-/> \<img
-src="[https://img.shields.io/badge/discord.js-v14-5865F2?style=flat-square&logo=discord&logoColor=white](https://img.shields.io/badge/discord.js-v14-5865F2?style=flat-square&logo=discord&logoColor=white)"
-/> \<img
-src="[https://img.shields.io/badge/MongoDB-8-47A248?style=flat-square&logo=mongodb&logoColor=white](https://img.shields.io/badge/MongoDB-8-47A248?style=flat-square&logo=mongodb&logoColor=white)"
-/> \<img
-src="[https://img.shields.io/badge/Docker-Supported-2496ED?style=flat-square&logo=docker&logoColor=white](https://img.shields.io/badge/Docker-Supported-2496ED?style=flat-square&logo=docker&logoColor=white)"
-/> \<img
-src="[https://img.shields.io/badge/Version-2.0.0-9B59B6?style=flat-square](https://img.shields.io/badge/Version-2.0.0-9B59B6?style=flat-square)"
-/> \</p>
-
----
-
 ## ✦ About
 
 **Kurogami** is a Discord bot project developed with modern JavaScript
