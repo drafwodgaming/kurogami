@@ -1,0 +1,79 @@
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: discord-bot:latest
+    container_name: discord-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      TZ: Europe/Moscow
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - internal
+
+  mongo:
+    image: mongo:8
+    container_name: mongodb
+    restart: unless-stopped
+    command: ['mongod', '--auth']
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      TZ: Europe/Moscow
+    volumes:
+      - mongo:/data/db
+    networks:
+      - internal
+    healthcheck:
+      test: >
+        mongosh --quiet
+        --username ${MONGO_ROOT_USERNAME}
+        --password ${MONGO_ROOT_PASSWORD}
+        --authenticationDatabase admin
+        --eval "db.adminCommand('ping').ok"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  backup:
+    image: mongo:8
+    profiles: ['backup']
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - internal
+    volumes:
+      - ./backups:/backups
+    entrypoint:
+      - sh
+      - -c
+      - |
+        set -e
+
+        mongodump \
+          --host mongo \
+          --username "${MONGO_ROOT_USERNAME}" \
+          --password "${MONGO_ROOT_PASSWORD}" \
+          --authenticationDatabase admin \
+          --db discord-bot-prod \
+          --archive=/backups/backup-$$(date +%F-%H-%M).gz \
+          --gzip
+
+        echo "backup done"
+        ls -1t /backups/backup-*.gz | tail -n +31 | xargs -r rm --
+
+volumes:
+  mongo:
+    name: mongodb
+
+networks:
+  internal:
+    name: botnet

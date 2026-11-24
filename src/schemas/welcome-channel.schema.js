@@ -1,0 +1,15 @@
+import { Schema, model } from 'mongoose'
+
+const welcomeChannelSchema = new Schema({
+	Guild: {
+		type: String,
+		required: true,
+		unique: true,
+	},
+	Channel: {
+		type: String,
+		required: true,
+	},
+})
+
+export default model('welcomechannels', welcomeChannelSchema)
