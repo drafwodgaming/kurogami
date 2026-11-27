@@ -11,12 +11,13 @@ services:
     environment:
       NODE_ENV: production
       TZ: Europe/Moscow
+    ports:
+      - '127.0.0.1:27017:27017'
     depends_on:
       mongo:
         condition: service_healthy
     networks:
       - internal
-
   mongo:
     image: mongo:8
     container_name: mongodb
