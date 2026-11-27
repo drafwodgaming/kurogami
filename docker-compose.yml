@@ -11,8 +11,6 @@ services:
     environment:
       NODE_ENV: production
       TZ: Europe/Moscow
-    ports:
-      - '127.0.0.1:27017:27017'
     depends_on:
       mongo:
         condition: service_healthy
@@ -27,6 +25,8 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
       TZ: Europe/Moscow
+    ports:
+      - '127.0.0.1:27017:27017'
     volumes:
       - mongo:/data/db
     networks:
