@@ -1,30 +1,6 @@
 # AI Agent Instructions
 
-## 1. Git Commit Messages
-
-Generate clear and natural commit messages in the format `type: description`.
-
-Allowed types:
-
-- `add` — add new files or features
-- `update` — update existing files or settings
-- `fix` — fix bugs
-- `remove` — remove files or code
-- `change` — change functionality
-- `docs` — add or update documentation
-- `test` — add or update tests
-
-Requirements:
-
-- Write in English, use lowercase, and omit the final period.
-- Keep titles under 72 characters when possible.
-- Inspect all staged changes and read newly added files to understand their purpose.
-- Describe what changed and why, focusing on functionality rather than filenames.
-- Use natural, specific descriptions without repeating the commit type or using vague wording.
-- Choose the most appropriate type and never invent changes.
-- Output only the commit message.
-
-## 2. Coding Style
+## 1. Coding Style
 
 - Write clean, readable, and maintainable code.
 - Prefer simple solutions over unnecessarily complex implementations.
@@ -34,7 +10,7 @@ Requirements:
 - Remove unused imports and unnecessary code.
 - Do not introduce unnecessary abstractions.
 
-## 3. Project Structure
+## 2. Project Structure
 
 - Respect the existing project architecture.
 - Keep files organized by their purpose.
@@ -43,7 +19,7 @@ Requirements:
 - Do not move or rename files without a good reason.
 - Avoid modifying unrelated files.
 
-## 4. Dependencies
+## 3. Dependencies
 
 - Reuse installed dependencies whenever possible.
 - Do not install packages without a valid reason.
@@ -51,7 +27,7 @@ Requirements:
 - Do not replace existing libraries without a clear benefit.
 - Update dependency files only when necessary.
 
-## 5. Security
+## 4. Security
 
 - Never hardcode API keys, passwords, or tokens.
 - Never expose secrets in logs or responses.
@@ -59,7 +35,7 @@ Requirements:
 - Validate external input where appropriate.
 - Do not weaken existing security measures.
 
-## 6. Git Operations
+## 5. Git Operations
 
 - Do not create commits unless explicitly requested.
 - Do not push changes without permission.
@@ -67,7 +43,7 @@ Requirements:
 - Do not overwrite uncommitted user changes.
 - Keep changes focused on the requested task.
 
-## 7. Testing and Verification
+## 6. Testing and Verification
 
 - Run relevant tests after making changes.
 - Check for errors and warnings.
@@ -75,7 +51,7 @@ Requirements:
 - Do not claim that something works without verification.
 - If tests cannot be run, explain why.
 
-## 8. Communication
+## 7. Communication
 
 - Communicate with the user in Russian.
 - Keep explanations concise and clear.
@@ -84,7 +60,7 @@ Requirements:
 - Do not make assumptions when important information is missing.
 - Present important limitations honestly.
 
-## 9. Problem Solving
+## 8. Problem Solving
 
 - Understand the problem before changing code.
 - Investigate the root cause instead of applying superficial fixes.
